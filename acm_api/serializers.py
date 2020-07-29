@@ -1,22 +1,27 @@
 from rest_framework import serializers
-from . import models
+
+from acm_api.models import CheckList, GroceryList
 
 
 class CheckListSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.CheckList
+        model = CheckList
         fields = ['id','text','completed']
 
 # class CheckListField(serializers.ListField):
 #     child = CheckListSerializer()
 
 class GroceryListSerializer(serializers.ModelSerializer):
-    items = CheckListSerializer(many=True)
+    # items = CheckListSerializer(many=True)
     class Meta:
-        model = models.GroceryList
-        fields = ['id', 'items']
+        model = GroceryList
+        fields = "__all__"
 
-    def create(self, validated_data):
-        return models.GroceryList.objects.create(**validated_data)
+    # def create(self, validated_data):
+    #     return GroceryList.objects.create(**validated_data)
+
+    # def save(self, *args, **kwargs):
+    #     self.revision += 1
+    #     return super(GroceryList, self).save()
 
 
