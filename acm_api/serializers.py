@@ -8,20 +8,17 @@ class CheckListSerializer(serializers.ModelSerializer):
         model = CheckList
         fields = ['id','text','completed']
 
-# class CheckListField(serializers.ListField):
-#     child = CheckListSerializer()
 
 class GroceryListSerializer(serializers.ModelSerializer):
-    # items = CheckListSerializer(many=True)
+    checklist_items = CheckListSerializer(many=True)
     class Meta:
         model = GroceryList
-        fields = "__all__"
+        fields = ["id", "name", "checklist_items"]
 
-    # def create(self, validated_data):
-    #     return GroceryList.objects.create(**validated_data)
-
+    def create(self, validated_data):
+        return GroceryList.objects.create(**validated_data)
+    #
     # def save(self, *args, **kwargs):
     #     self.revision += 1
     #     return super(GroceryList, self).save()
-
 
