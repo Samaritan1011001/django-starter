@@ -4,7 +4,9 @@ from acm_api.models import CheckList, GroceryList
 
 
 class CheckListSerializer(serializers.ModelSerializer):
+
     class Meta:
+        # many = True
         model = CheckList
         fields = ['id','text','completed']
 
