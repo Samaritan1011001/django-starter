@@ -19,7 +19,7 @@ urlpatterns = [
     # url(r'glists', CreateAPIView.as_view(queryset=models.GroceryList.objects.all(), serializer_class=serializers.GroceryListSerializer))
     # url(r'checklists', CheckListView.as_view(queryset=models.CheckList.objects.all(), serializer_class=serializers.CheckListSerializer))
 
-    path('glists/<int:pk>/checklist/', views.CheckListView.as_view()),
+    path('glists/<int:pk>/checklists/', views.CheckListView.as_view()),
     path('glists/', views.GroceryListView.as_view()),
     path('glists/<int:pk>/', views.GListDetail.as_view()),
 ]

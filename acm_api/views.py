@@ -26,30 +26,43 @@ class GListDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = models.GroceryList.objects.all()
     serializer_class = serializers.GroceryListSerializer
 
-class CheckListView(generics.ListAPIView):
+class CheckListView(generics.ListCreateAPIView):
     model = CheckList
     # queryset = models.CheckList.objects.filter()
-    serializer_class = serializers.CheckListSerializer
+    # serializer_class = serializers.CheckListSerializer
 
-    # def get_serializer_class(self, *args, **kwargs):
-    #     return serializers.CheckListSerializer
-    #
-    # def get_serializer(self, *args, **kwargs):
-    #     print("args -> ",args)
-    #     print("kwargs -> ",kwargs)
-    #     return self.get_serializer_class(self)
+    def get_serializer_class(self):
+        return serializers.CheckListSerializer
+
+    def get_serializer(self, *args, **kwargs):
+        # print("args -> ",args)
+        serializer_class = self.get_serializer_class()
+        # kwargs['many'] = True
+        if self.request.method.lower() == 'post':
+            data = kwargs.get('data')
+            kwargs['many'] = isinstance(data, list)
+            # print("kwargs -> ", *kwargs)
+        return serializer_class(*args, **kwargs)
+
 
     def get_queryset(self):
         pk = self.kwargs['pk']
-        return models.CheckList.objects.filter(items_id= pk)
+        return models.CheckList.objects.filter(items_id=pk)
 
 
     def perform_create(self, serializer: serializers.CheckListSerializer):
-        # print("called ->", serializer)
         glist, created = models.GroceryList.objects.get_or_create(id=self.kwargs['pk'])
-        checklist = CheckList(**serializer.validated_data)
-        glist.checklist_items.add(checklist,bulk=False)
-        checklist.save()
-
+        # print(serializer.validated_data)
+        if isinstance(serializer.validated_data, list):
+            for data in serializer.validated_data:
+                # print("data -> ", data)
+                data["items_id"] = self.kwargs['pk']
+                c_data = CheckList(**data)
+                c_data.save()
+                # print("c_data -> ", c_data.id)
+                glist.checklist_items.add(c_data, bulk=False)
+        else:
+            c_data = CheckList(**serializer.validated_data)
+            glist.checklist_items.add(c_data, bulk=False)
 
 
